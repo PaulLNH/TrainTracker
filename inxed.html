@@ -12,7 +12,7 @@
         crossorigin="anonymous">
 
     <!-- App specific stylesheet -->
-    <link rel="stylesheet" type="text/css" media="screen" href="style.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="assets/css/style.css" />
 
 </head>
 
@@ -30,47 +30,30 @@
             <div class="card-header card-primary">
                 <h3 class="float-left">Train Schedule</h3>
                 <p class="lead float-right">
-                    <em>Get off on the right track to be on time, everytime.</em>
+                    <em>Get on the right track to be on time, everytime.</em>
                 </p>
             </div>
             <div class="card-body">
+                <p class="text-center">
+                    <b>Current Time: </b>
+                    <span id="currentTime"></span>
+                </p>
+
                 <!-- Table -->
                 <table class="table table-dark">
                     <thead>
                         <tr>
-                            <th scope="col"></th>
+
                             <th scope="col">Train Name</th>
                             <th scope="col">Destination</th>
+                            <th scope="col">Train Start</th>
                             <th scope="col">Frequency (min)</th>
                             <th scope="col">Next Arrival</th>
                             <th scope="col">Min Away</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <th scope="row">1</th>
-                            <td>Bolt Lightning</td>
-                            <td>Station B</td>
-                            <td>17 min</td>
-                            <td>17:00</td>
-                            <td>6 min</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">2</th>
-                            <td>Thomas</td>
-                            <td>Station D</td>
-                            <td>13 min</td>
-                            <td>11:00</td>
-                            <td>10 min</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">3</th>
-                            <td>Monorail</td>
-                            <td>Station A</td>
-                            <td>20 min</td>
-                            <td>13:20</td>
-                            <td>14 min</td>
-                        </tr>
+                    <tbody id="trainTable">
+                        <!-- Train Table generates here -->
                     </tbody>
                 </table>
             </div>
@@ -87,20 +70,20 @@
                 <form>
                     <div class="form-row">
                         <div class="col">
-                            <input type="text" class="form-control" placeholder="Train Name">
+                            <input type="text" id="inputName" class="form-control" placeholder="Train Name">
                         </div>
                         <div class="col">
-                            <input type="text" class="form-control" placeholder="Destination">
+                            <input type="text" id="inputDestination" class="form-control" placeholder="Destination">
                         </div>
                         <div class="col">
-                            <input type="text" class="form-control" placeholder="First Train (ex: 19:00)">
+                            <input type="text" id="inputFirst" class="form-control" placeholder="First Train (ex: 19:00)">
                         </div>
                         <div class="col">
-                            <input type="text" class="form-control" placeholder="Frequency">
+                            <input type="text" id="inputFrequency" class="form-control" placeholder="Frequency">
                         </div>
                     </div>
                     <hr>
-                    <button type="submit" class="btn btn-primary">Add Train</button>
+                    <button type="submit" id="submitBtn" class="btn btn-primary">Add Train</button>
                 </form>
             </div>
             <!-- End of form -->
