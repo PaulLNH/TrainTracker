@@ -9,9 +9,8 @@ var config = {
 };
 firebase.initializeApp(config);
 
+// Store database obj to var
 var database = firebase.database();
-
-var train = [];
 
 // 2. Adding new train
 $("#submitBtn").on("click", function(event) {
@@ -51,9 +50,6 @@ $("#submitBtn").on("click", function(event) {
   console.log(newTrain.start);
   console.log(newTrain.frequency);
 
-  // Alert
-  alert("Train successfully added");
-
   // Clears all of the text-boxes
   $("#inputName").val("");
   $("#inputDestination").val("");
@@ -62,7 +58,7 @@ $("#submitBtn").on("click", function(event) {
 });
 
 // 3. Create Firebase event for adding new train to the database and a row to our table
-database.ref().on("child_added", function(childSnapshot, prevChildKey) {
+database.ref().on("child_added", function(childSnapshot) {
   console.log(childSnapshot.val());
 
   // Store everything into a variable.
@@ -70,10 +66,6 @@ database.ref().on("child_added", function(childSnapshot, prevChildKey) {
   var trainDestination = childSnapshot.val().destination;
   var trainStart = childSnapshot.val().start;
   var trainFrequency = childSnapshot.val().frequency;
-
-  ///////////// TEST CODE //////////
-
-  /////////////// TEST CODE //////////
 
   // Calculate the train times using moment js
 
