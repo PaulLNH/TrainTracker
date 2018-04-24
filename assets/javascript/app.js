@@ -11,9 +11,8 @@ firebase.initializeApp(config);
 
 // Store database obj to var
 var database = firebase.database();
-var ref = database.ref("traintracker-2b358");
 
-// Function to call on a timer to update train table
+// Function to update train table
 function updateTrainTable() {
   // Clears the table
   $("#trainTable").html("");
@@ -32,13 +31,17 @@ function updateTrainTable() {
         // Calculate the train times using moment js
 
         // First Time (pushed back 1 year to make sure it comes before current time)
-        var startTimeConverted = moment(trainStart, "HH:mm");
+        var startTimeConverted = moment(trainStart, "HH:mm").subtract(
+          1,
+          "years"
+        );
         var displayTime = moment(startTimeConverted).format("HH:mm");
 
         // Current Time
         var currentTime = moment();
-        // Use this variable to change the time at the top of the chart for CURRENT TIME:
-        var displayCurrent = moment(currentTime).format("HH:mm");
+
+        // Displays current time in a format that is good for humans to read
+        var displayCurrent = moment(currentTime).format("HH:mm:ss A");
 
         // Difference between the times
         var diffTime = moment().diff(moment(startTimeConverted), "minutes");
@@ -46,12 +49,13 @@ function updateTrainTable() {
         // Time apart (remainder)
         var tRemainder = diffTime % trainFrequency;
 
-        // Minute Until Train
+        // Minute Until next Train
         var tMinutesTillTrain = trainFrequency - tRemainder;
 
         // Next Train
         var nextTrain = moment().add(tMinutesTillTrain, "minutes");
 
+        // Displays the arrival time in a format that is good for humans to read
         var displayArrival = moment(nextTrain).format("HH:mm");
 
         $("#currentTime").text(displayCurrent);
@@ -76,13 +80,12 @@ function updateTrainTable() {
   });
 }
 
-// Checks for an update every 10 seconds
+// Checks for an update every second
 var liveUpdate = setInterval(function() {
   updateTrainTable();
-}, 10000);
-////////// TEST CODE ////////////
+}, 1000);
 
-// 2. Adding new train
+// Adds new train via the form
 $("#submitBtn").on("click", function(event) {
   event.preventDefault();
 
@@ -111,26 +114,18 @@ $("#submitBtn").on("click", function(event) {
     frequency: trainFrequency
   };
 
-  // Uploads employee data to the database
+  // Uploads train info to the database
   database.ref().push(newTrain);
 
-  // Logs everything to console
-  //   console.log(newTrain.name);
-  //   console.log(newTrain.destination);
-  //   console.log(newTrain.start);
-  //   console.log(newTrain.frequency);
-
-  // Clears all of the text-boxes
+  // Clears all of the input fields
   $("#inputName").val("");
   $("#inputDestination").val("");
   $("#inputFirst").val("");
   $("#inputFrequency").val("");
 });
 
-// 3. Create Firebase event for adding new train to the database and a row to our table
+// Event listner in firebase when new train is added to the database
 database.ref().on("child_added", function(childSnapshot) {
-  // console.log(childSnapshot.val());
-
   // Store everything into a variable.
   var trainName = childSnapshot.val().name;
   var trainDestination = childSnapshot.val().destination;
@@ -140,14 +135,14 @@ database.ref().on("child_added", function(childSnapshot) {
   // Calculate the train times using moment js
 
   // First Time (pushed back 1 year to make sure it comes before current time)
-  var startTimeConverted = moment(trainStart, "HH:mm");
+  var startTimeConverted = moment(trainStart, "HH:mm").subtract(1, "years");
   var displayTime = moment(startTimeConverted).format("HH:mm");
   // console.log("START TIME: " + displayTime);
 
   // Current Time
   var currentTime = moment();
   // Use this variable to change the time at the top of the chart for CURRENT TIME:
-  var displayCurrent = moment(currentTime).format("HH:mm");
+  var displayCurrent = moment(currentTime).format("HH:mm:ss A");
 
   // Difference between the times
   var diffTime = moment().diff(moment(startTimeConverted), "minutes");
