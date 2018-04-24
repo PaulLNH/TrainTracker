@@ -8,9 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Firebase login -->
-    <!-- <script src="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.js"></script> -->
+    <script src="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.js"></script>
     <!-- Firebase CSS -->
-    <!-- <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.css" /> -->
+    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.css" />
 
     <!-- Bootstrap CDN -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
@@ -64,7 +64,8 @@
             <div class="card-header card-primary">
                 <h4>New Train</h4>
             </div>
-            <div class="card-body">
+            <div class="card-body" id="firebaseui-auth-container">
+                <div id="loading">Loading...</div>
                 <!-- New train submission form -->
                 <form>
                     <div class="form-row">
