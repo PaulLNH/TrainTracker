@@ -168,9 +168,7 @@ $("body").on("click", "#editSave", function() {
     database.ref(getKey).update(updates);
 
     // Hide modal
-    $("#trainModal").modal({
-      show: false
-    });
+    $("#trainModal").modal("hide");
   }
 });
 
