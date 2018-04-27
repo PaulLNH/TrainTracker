@@ -5,6 +5,7 @@
 
 tr.hover:hover {
   background: #2d3338;
+  cursor: pointer;
 }
 
 tr.hover:hover .removeBtn {

@@ -14,6 +14,7 @@ var database = firebase.database();
 var update = false;
 var updateBtn = $("#updateBtn");
 var getKey = "";
+var editName, editDestination, editFrequency, editStart;
 
 // Function to update train table
 function updateTrainTable() {
@@ -65,7 +66,7 @@ function updateTrainTable() {
         $("#currentTime").text(displayCurrent);
         // Add each train's data into the table
         $("#trainTable").append(
-          '<tr class="hover" id="' +
+          '<tr class="hover updateBtn" id="' +
             data.key +
             '"><td>' +
             trainName +
@@ -79,19 +80,17 @@ function updateTrainTable() {
             displayArrival +
             "</td><td>" +
             tMinutesTillTrain +
-            ' min </td> <td><i class="fas fa-times-circle removeBtn"></i></td></tr>'
+            ' min </td> <td><i class="fas fa-times-circle removeBtn" data-toggle="tooltip" data-placement="right" title="Remove Train"></i></td></tr>'
         );
       });
     }
   });
 }
 
-// Function to update the live data table
-function updateBtn() {
-  // Logic to update train
-  // When clicking on an element that element will turn into a text box
-  // You can modify the text box and hit "Enter" and it will update the database
-}
+// Enable tooltip for remove button
+$(document).ready(function() {
+  $('[data-toggle="tooltip"]').tooltip();
+});
 
 // Remove line button
 $("body").on("click", ".removeBtn", function() {
@@ -103,6 +102,76 @@ $("body").on("click", ".removeBtn", function() {
   $(this)
     .closest("tr")
     .remove();
+});
+
+// Update Form
+$("body").on("click", ".updateBtn", function() {
+  getKey = $(this).attr("id");
+  console.log(getKey);
+  database.ref(getKey).once("value", function(snapshot) {
+    console.log(JSON.stringify(snapshot));
+    editName = snapshot.val().name;
+    console.log(JSON.stringify(editName));
+    editDestination = snapshot.val().destination;
+    console.log(editDestination);
+    editStart = snapshot.val().start;
+    console.log(editStart);
+    editFrequency = snapshot.val().frequency;
+    console.log(editFrequency);
+    $("#editName").attr("value", editName);
+    $("#editDestination").attr("value", editDestination);
+    $("#editStart").attr("value", editStart);
+    $("#editFrequency").attr("value", editFrequency);
+  });
+  // Display modal, disable escape key and disable clicking off the modal
+  $("#trainModal").modal({
+    show: true,
+    backdrop: "static",
+    keyboard: false
+  });
+});
+
+// Update Button
+$("body").on("click", "#editSave", function() {
+  // Grab field inputs
+  var newName = $("#editName")
+    .val()
+    .trim();
+  var newDestination = $("#editDestination")
+    .val()
+    .trim();
+  var newStart = $("#editStart")
+    .val()
+    .trim();
+  var newFrequency = $("#editFrequency")
+    .val()
+    .trim();
+  // Form Validation
+  if (!newName || !newDestination || !newStart || !newFrequency) {
+    $("#editWarning")
+      .text("You did not input all the necessary fields")
+      .css("color", "red");
+    setTimeout(function() {
+      $("#editWarning")
+        .text("")
+        .css("color", "black");
+    }, 3000);
+  } else {
+    var updates = {
+      name: newName,
+      destination: newDestination,
+      start: newStart,
+      frequency: newFrequency
+    };
+
+    // Update database
+    database.ref(getKey).update(updates);
+
+    // Hide modal
+    $("#trainModal").modal({
+      show: false
+    });
+  }
 });
 
 // Checks for an update every second
@@ -204,7 +273,7 @@ database.ref().on("child_added", function(childSnapshot) {
   $("#currentTime").text(displayCurrent);
   // Add each train's data into the table
   $("#trainTable").append(
-    '<tr class="hover" id="' +
+    '<tr class="hover updateBtn" id="' +
       childSnapshot.key +
       '"><td>' +
       trainName +
@@ -218,6 +287,6 @@ database.ref().on("child_added", function(childSnapshot) {
       displayArrival +
       "</td><td>" +
       tMinutesTillTrain +
-      ' min </td> <td><i class="fas fa-times-circle removeBtn"></i></td></tr>'
+      ' min </td> <td><i class="fas fa-times-circle removeBtn" data-toggle="tooltip" data-placement="right" title="Remove Train"></i></td></tr>'
   );
 });
