@@ -1,0 +1,12 @@
+.removeBtn {
+  visibility: hidden;
+  cursor: pointer;
+}
+
+tr.hover:hover {
+  background: #2d3338;
+}
+
+tr.hover:hover .removeBtn {
+  visibility: visible;
+}

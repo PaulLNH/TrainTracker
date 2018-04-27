@@ -9,49 +9,11 @@ var config = {
 };
 firebase.initializeApp(config);
 
-// Initialize the FirebaseUI Widget using Firebase.
-var ui = new firebaseui.auth.AuthUI(firebase.auth());
-
-// Login with Google
-ui.start("#firebaseui-auth-container", {
-  signInOptions: [
-    // List of OAuth providers supported.
-    firebase.auth.GoogleAuthProvider.PROVIDER_ID
-  ]
-  // Other config options...
-});
-
-var uiConfig = {
-  callbacks: {
-    signInSuccessWithAuthResult: function(authResult, redirectUrl) {
-      // User successfully signed in.
-      // Return type determines whether we continue the redirect automatically
-      // or whether we leave that to developer to handle.
-      return true;
-    },
-    uiShown: function() {
-      // The widget is rendered.
-      // Hide the loader.
-      document.getElementById("loader").style.display = "none";
-    }
-  },
-  // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
-  signInFlow: "popup",
-  signInSuccessUrl: "https://paullnh.github.io/TrainTracker/index.html",
-  signInOptions: [
-    // Leave the lines as is for the providers you want to offer your users.
-    firebase.auth.GoogleAuthProvider.PROVIDER_ID
-  ],
-  // Terms of service url.
-  tosUrl: "https://paullnh.github.io/TrainTracker/index.html"
-};
-
-// The start method will wait until the DOM is loaded.
-ui.start("#firebaseui-auth-container", uiConfig);
-////// OAuth goes above here //////
-
 // Store database obj to var
 var database = firebase.database();
+var update = false;
+var updateBtn = $("#updateBtn");
+var getKey = "";
 
 // Function to update train table
 function updateTrainTable() {
@@ -68,6 +30,7 @@ function updateTrainTable() {
         var trainDestination = data.val().destination;
         var trainStart = data.val().start;
         var trainFrequency = data.val().frequency;
+        // var trainId = data.key();
 
         // Calculate the train times using moment js
 
@@ -102,7 +65,9 @@ function updateTrainTable() {
         $("#currentTime").text(displayCurrent);
         // Add each train's data into the table
         $("#trainTable").append(
-          "<tr><td>" +
+          '<tr class="hover" id="' +
+            data.key +
+            '"><td>' +
             trainName +
             "</td><td>" +
             trainDestination +
@@ -114,16 +79,37 @@ function updateTrainTable() {
             displayArrival +
             "</td><td>" +
             tMinutesTillTrain +
-            " min </td></tr>"
+            ' min </td> <td><i class="fas fa-times-circle removeBtn"></i></td></tr>'
         );
       });
     }
   });
 }
 
+// Function to update the live data table
+function updateBtn() {
+  // Logic to update train
+  // When clicking on an element that element will turn into a text box
+  // You can modify the text box and hit "Enter" and it will update the database
+}
+
+// Remove line button
+$("body").on("click", ".removeBtn", function() {
+  getKey = $(this)
+    .parent()
+    .parent()
+    .attr("id");
+  database.ref(getKey).remove();
+  $(this)
+    .closest("tr")
+    .remove();
+});
+
 // Checks for an update every second
 var liveUpdate = setInterval(function() {
-  updateTrainTable();
+  if (!update) {
+    updateTrainTable();
+  }
 }, 1000);
 
 // Adds new train via the form
@@ -147,26 +133,38 @@ $("#submitBtn").on("click", function(event) {
     .val()
     .trim();
 
-  // Creates local "temporary" object for holding train data
-  var newTrain = {
-    name: trainName,
-    destination: trainDestination,
-    start: trainStart,
-    frequency: trainFrequency
-  };
+  if (!trainName || !trainDestination || !trainStart || !trainFrequency) {
+    $("#warningText")
+      .text("You did not input all the necessary fields")
+      .css("color", "red");
+    setTimeout(function() {
+      $("#warningText")
+        .text("")
+        .css("color", "black");
+    }, 3000);
+  } else {
+    // Creates local "temporary" object for holding train data
+    var newTrain = {
+      name: trainName,
+      destination: trainDestination,
+      start: trainStart,
+      frequency: trainFrequency
+    };
 
-  // Uploads train info to the database
-  database.ref().push(newTrain);
+    // Uploads train info to the database
+    database.ref().push(newTrain);
 
-  // Clears all of the input fields
-  $("#inputName").val("");
-  $("#inputDestination").val("");
-  $("#inputFirst").val("");
-  $("#inputFrequency").val("");
+    // Clears all of the input fields
+    $("#inputName").val("");
+    $("#inputDestination").val("");
+    $("#inputFirst").val("");
+    $("#inputFrequency").val("");
+  }
 });
 
 // Event listner in firebase when new train is added to the database
 database.ref().on("child_added", function(childSnapshot) {
+  console.log(childSnapshot.key);
   // Store everything into a variable.
   var trainName = childSnapshot.val().name;
   var trainDestination = childSnapshot.val().destination;
@@ -206,7 +204,9 @@ database.ref().on("child_added", function(childSnapshot) {
   $("#currentTime").text(displayCurrent);
   // Add each train's data into the table
   $("#trainTable").append(
-    "<tr><td>" +
+    '<tr class="hover" id="' +
+      childSnapshot.key +
+      '"><td>' +
       trainName +
       "</td><td>" +
       trainDestination +
@@ -218,6 +218,6 @@ database.ref().on("child_added", function(childSnapshot) {
       displayArrival +
       "</td><td>" +
       tMinutesTillTrain +
-      " min </td></tr>"
+      ' min </td> <td><i class="fas fa-times-circle removeBtn"></i></td></tr>'
   );
 });
