@@ -15,6 +15,10 @@ var update = false;
 var updateBtn = $("#updateBtn");
 var getKey = "";
 var editName, editDestination, editFrequency, editStart;
+var nameID = document.getElementById("editName");
+var desID = document.getElementById("editDestination");
+var startID = document.getElementById("editStart");
+var freqID = document.getElementById("editFrequency");
 
 // Function to update train table
 function updateTrainTable() {
@@ -128,6 +132,43 @@ $("body").on("click", ".updateBtn", function () {
         backdrop: "static",
         keyboard: false
     });
+});
+
+// Pressing Enter in the editName input submits changes
+nameID.addEventListener("keyup", function (event) {
+    event.preventDefault();
+    // Number 13 is the "Enter" key
+    if (event.keyCode === 13) {
+        // Trigger the button element with a click
+        document.getElementById("editSave").click();
+    }
+});
+// Pressing Enter in the editDestination input submits changes
+desID.addEventListener("keyup", function (event) {
+    event.preventDefault();
+    // Number 13 is the "Enter" key
+    if (event.keyCode === 13) {
+        // Trigger the button element with a click
+        document.getElementById("editSave").click();
+    }
+});
+// Pressing Enter in the editStart input submits changes
+startID.addEventListener("keyup", function (event) {
+    event.preventDefault();
+    // Number 13 is the "Enter" key
+    if (event.keyCode === 13) {
+        // Trigger the button element with a click
+        document.getElementById("editSave").click();
+    }
+});
+// Pressing Enter in the editFrequency input submits changes
+freqID.addEventListener("keyup", function (event) {
+    event.preventDefault();
+    // Number 13 is the "Enter" key
+    if (event.keyCode === 13) {
+        // Trigger the button element with a click
+        document.getElementById("editSave").click();
+    }
 });
 
 // Update Button
