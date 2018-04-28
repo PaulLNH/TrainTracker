@@ -2,12 +2,19 @@
   visibility: hidden;
   cursor: pointer;
 }
-
-tr.hover:hover {
-  background: #2d3338;
+.updateBtn {
+  visibility: hidden;
   cursor: pointer;
 }
 
+tr.hover:hover {
+  background: #2d3338;
+}
+
 tr.hover:hover .removeBtn {
+  visibility: visible;
+}
+
+tr.hover:hover .updateBtn {
   visibility: visible;
 }
